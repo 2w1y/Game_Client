@@ -204,14 +204,10 @@ def register_menu():
 
 
         for event in pygame.event.get():
-           #navigation
             if event.type == QUIT:
+                send({"acctiviti":DISCONNECT_MESSAGE})
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False
-
             #inputs on/off
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if input_rect_login.collidepoint(event.pos):
@@ -223,27 +219,31 @@ def register_menu():
                 else:
                     active_login = False
                     active_password = False
-            
-                #register backend   #napisać nowy gdyż ten jest ze starego
+
+                #login backend
                 if login_button.collidepoint(event.pos):
                     if len(input_login) >= 6:
                         if len(input_password) >= 6:
                             if ignore_serwer:
                                 print("[Developer] Ignorwanie serwera jest włączone")
-                                login_menu()
+                                welcom_menu()
                                 pass
-                            else:#Backend tworzenia konta
+                            else:
                                 client.send(pickle.dumps({"acctiviti":"LOGIN","login":input_login,"password":input_password}))
                                 if client.recv(2048).decode(FORMAT) == "True":
                                     print("zalogowano")
                                     welcom_menu()
                                 else:
                                     error_login = 1
-                                    print("Nie udało się utworzyć konta ")
+                                    print("Nie udało się zalogować ")
                         else:
                             error_login = 3
                     else:
                         error_login = 2
+            #navigation input
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
 
                 #login input
                 if active_login:
@@ -337,7 +337,7 @@ def login_menu():
 
         #login Button
         pygame.draw.rect(screen,color_active,login_button)
-        text_surface_button_login = font_text.render("test",True,(255,255,255))
+        text_surface_button_login = font_text.render("LOGIN",True,(255,255,255))
         screen.blit(text_surface_button_login,(login_button.x + 5,login_button.y + 5))
 
         #register Button
