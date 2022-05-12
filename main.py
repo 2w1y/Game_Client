@@ -7,7 +7,6 @@ import time
 import pickle
 
 
-
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -35,7 +34,7 @@ except:
 #starting options
 pygame.init()
 pygame.display.set_caption('game base')
-screensizex, screensizey = 1280, 720
+screensizex, screensizey = 1920,1080  # mniejszy ekran 1280 x 720 większy 1920 x 1080
 screen = pygame.display.set_mode((screensizex, screensizey),0,32)
  
 font = pygame.font.SysFont(None, 20)
@@ -145,7 +144,7 @@ def register_menu():
     #params
     active_login = False
     active_password = False
-    error_login = 0
+    error_register = 0
     
     
 
@@ -194,11 +193,11 @@ def register_menu():
         screen.blit(text_surface_button_login,(login_button.x + 5,login_button.y + 5))
 
         #Error login
-        if error_login == 1:
+        if error_register == 1:
             draw_text('Nieprowawna nazwa lub hasło', font, (255, 0, 0), screen, input_rect_login.x, input_rect_login.y - 40)
-        if error_login == 2:
+        if error_register == 2:
             draw_text('Za którki login', font, (255, 0, 0), screen, input_rect_login.x, input_rect_login.y - 40)
-        if error_login == 3:
+        if error_register == 3:
             draw_text('Za którkie hasło', font, (255, 0, 0), screen, input_rect_password.x, input_rect_password.y - 40)
 
 
@@ -229,17 +228,17 @@ def register_menu():
                                 welcom_menu()
                                 pass
                             else:
-                                client.send(pickle.dumps({"acctiviti":"LOGIN","login":input_login,"password":input_password}))
+                                client.send(pickle.dumps({"acctiviti":"REGISTER","login":input_login,"password":input_password}))
                                 if client.recv(2048).decode(FORMAT) == "True":
-                                    print("zalogowano")
-                                    welcom_menu()
+                                    print("Konto Utworzone")
+                                    login_menu()
                                 else:
-                                    error_login = 1
-                                    print("Nie udało się zalogować ")
+                                    error_register = 1
+                                    print("Nie udało Utworzyć konta")
                         else:
-                            error_login = 3
+                            error_register = 3
                     else:
-                        error_login = 2
+                        error_register = 2
             #navigation input
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
@@ -267,7 +266,7 @@ def register_menu():
                                 if len(input_password) != 20:
                                     input_password += event.unicode
                                 else:
-                                    print("Za długi hasło") #Tu będzie wyskawiać że za długie hasło
+                                    print("Za długie hasło") #Tu będzie wyskawiać że za długie hasło
         
 
         pygame.display.update()
