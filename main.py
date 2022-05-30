@@ -34,7 +34,11 @@ except:
 #starting options
 pygame.init()
 pygame.display.set_caption('game base')
-screensizex, screensizey = 1920,1080  # mniejszy ekran 1280 x 720 większy 1920 x 1080
+WIDTH = 1920
+HEIGHT = 1080
+screensizex, screensizey = WIDTH,HEIGHT  # mniejszy ekran 1280 x 720 większy 1920 x 1080
+
+SQ_SIZE = 45 #Od czego jest zależna ta zmienna ??
 screen = pygame.display.set_mode((screensizex, screensizey),0,32)
  
 font = pygame.font.SysFont(None, 20)
@@ -95,9 +99,27 @@ def welcom_menu():
 def game():
     running = True
     while running:
-        screen.fill((0,0,0))
-        
+        #screen.fill((0,0,0))
         draw_text('Gra', font, (255, 255, 255), screen, 20, 20)
+        
+        
+        GREY = (40, 50, 70)
+        WHITE = (255, 255, 255)
+        # drawing grids
+        def draw_grid(a=0, b=0):
+            for i in range(100):
+                x = a + i % 10 * SQ_SIZE
+                y = b + i // 10 * SQ_SIZE
+                square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
+                pygame.draw.rect(screen, WHITE, square, width=1)
+  
+  
+        screen.fill(GREY)
+        draw_grid(a=100, b=100)
+        draw_grid(a=WIDTH - 100 - SQ_SIZE*10, b=100)
+        
+        
+        
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
