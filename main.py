@@ -7,7 +7,6 @@ import time
 import pickle
 
 
-
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -35,7 +34,7 @@ except:
 #starting options
 pygame.init()
 pygame.display.set_caption('game base')
-screensizex, screensizey = 1920, 1080
+screensizex, screensizey = 1920,1080  # mniejszy ekran 1280 x 720 większy 1920 x 1080
 screen = pygame.display.set_mode((screensizex, screensizey),0,32)
  
 font = pygame.font.SysFont(None, 20)
@@ -129,11 +128,8 @@ def options():
 
 
 
-
-
-
-
-def login_menu():
+def register_menu():
+    #dodać opcje iż podczas naciskania enter/tab przełącza na drugiego boxa do pisania
     input_login = ''
     input_password = ''
     symbols = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','r','s','t','u','w','x','y','z','1','2','3','4','5','6','7','8','9','0']
@@ -142,8 +138,155 @@ def login_menu():
     color_passive = pygame.Color('gray15')
     #buttons
     input_rect_login= pygame.Rect(200,200,140,45)
+    
     input_rect_password= pygame.Rect(200,300,140,45)
     login_button= pygame.Rect(200,390,250,45)
+    #params
+    active_login = False
+    active_password = False
+    error_register = 0
+    
+    
+
+    running = True
+    while running:
+        screen.fill((0,0,0))
+        draw_text('register', font, (255, 255, 255), screen, 20, 20)
+        
+        #user input login
+        if active_login:
+            color_login = color_active
+            box_login = 3
+        else:
+            color_login = color_passive
+            box_login = 2
+        
+        #user input password
+        if active_password:
+            color_password = color_active
+            box_password = 3
+        else:
+            color_password = color_passive
+            box_password = 2
+
+
+
+        #Login box
+        pygame.draw.rect(screen,color_login,input_rect_login,box_login)
+        text_surface_login = font_text.render(input_login,True,(255,255,255))
+        screen.blit(text_surface_login,(input_rect_login.x + 5,input_rect_login.y + 5))
+        input_rect_login.w = max(250, text_surface_login.get_width()+ 10)
+        
+        #Password box
+        pygame.draw.rect(screen,color_password,input_rect_password,box_password)
+        text_surface_password = font_text.render("*" * len(input_password),True,(255,255,255))
+        screen.blit(text_surface_password,(input_rect_password.x + 5,input_rect_password.y + 5))
+        input_rect_password.w = max(250, text_surface_password.get_width()+ 10)
+
+
+        draw_text('LOGIN: (Register)', font, (255, 255, 255), screen, input_rect_login.x, input_rect_login.y - 20)
+        draw_text('PASSWORD:', font, (255, 255, 255), screen, input_rect_password.x, input_rect_password.y - 20)
+
+        #login Button
+        pygame.draw.rect(screen,color_active,login_button)
+        text_surface_button_login = font_text.render("LOGIN",True,(255,255,255))
+        screen.blit(text_surface_button_login,(login_button.x + 5,login_button.y + 5))
+
+        #Error login
+        if error_register == 1:
+            draw_text('Nieprowawna nazwa lub hasło', font, (255, 0, 0), screen, input_rect_login.x, input_rect_login.y - 40)
+        if error_register == 2:
+            draw_text('Za którki login', font, (255, 0, 0), screen, input_rect_login.x, input_rect_login.y - 40)
+        if error_register == 3:
+            draw_text('Za którkie hasło', font, (255, 0, 0), screen, input_rect_password.x, input_rect_password.y - 40)
+
+
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                send({"acctiviti":DISCONNECT_MESSAGE})
+                pygame.quit()
+                sys.exit()
+            #inputs on/off
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_rect_login.collidepoint(event.pos):
+                    active_login = True
+                    active_password = False
+                elif input_rect_password.collidepoint(event.pos):
+                    active_password = True
+                    active_login = False
+                else:
+                    active_login = False
+                    active_password = False
+
+                #login backend
+                if login_button.collidepoint(event.pos):
+                    if len(input_login) >= 6:
+                        if len(input_password) >= 6:
+                            if ignore_serwer:
+                                print("[Developer] Ignorwanie serwera jest włączone")
+                                welcom_menu()
+                                pass
+                            else:
+                                client.send(pickle.dumps({"acctiviti":"REGISTER","login":input_login,"password":input_password}))
+                                if client.recv(2048).decode(FORMAT) == "True":
+                                    print("Konto Utworzone")
+                                    login_menu()
+                                else:
+                                    error_register = 1
+                                    print("Nie udało Utworzyć konta")
+                        else:
+                            error_register = 3
+                    else:
+                        error_register = 2
+            #navigation input
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+
+                #login input
+                if active_login:
+                    if event.key == K_BACKSPACE:
+                        input_login = input_login[:-1]
+                    else:
+                        for symbol in symbols:
+                            if symbol == event.unicode.casefold():
+                                if len(input_login) != 20:
+                                    input_login += event.unicode
+                                else:
+                                    print("Za długi login") #Tu będzie wyskawiać że za długi logi
+
+                #password input
+                if active_password:
+                    if event.key == K_BACKSPACE:
+                        input_password = input_password[:-1]
+                    else:
+                        for symbol in symbols:
+                            if symbol == event.unicode.casefold():
+                                if len(input_password) != 20:
+                                    input_password += event.unicode
+                                else:
+                                    print("Za długie hasło") #Tu będzie wyskawiać że za długie hasło
+        
+
+        pygame.display.update()
+        mainClock.tick(60)
+
+
+def login_menu():
+    #dodać opcje iż podczas naciskania enter/tab przełącza na drugiego boxa do pisania
+    input_login = ''
+    input_password = ''
+    symbols = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','r','s','t','u','w','x','y','z','1','2','3','4','5','6','7','8','9','0']
+    #color used
+    color_active = pygame.Color('lightskyblue3')
+    color_passive = pygame.Color('gray15')
+    #buttons
+    input_rect_login= pygame.Rect(200,200,140,45)
+    
+    input_rect_password= pygame.Rect(200,300,140,45)
+    login_button= pygame.Rect(200,390,250,45)
+    register_button = pygame.Rect(200,490,250,45)
     #params
     active_login = False
     active_password = False
@@ -193,9 +336,13 @@ def login_menu():
 
         #login Button
         pygame.draw.rect(screen,color_active,login_button)
-        text_surface_button_login = font_text.render("test",True,(255,255,255))
+        text_surface_button_login = font_text.render("LOGIN",True,(255,255,255))
         screen.blit(text_surface_button_login,(login_button.x + 5,login_button.y + 5))
 
+        #register Button
+        pygame.draw.rect(screen,color_active,register_button)
+        text_surface_button_register = font_text.render("Register",True,(255,255,255))
+        screen.blit(text_surface_button_register,(register_button.x + 5,register_button.y + 5))
 
         #Error login
         if error_login == 1:
@@ -223,7 +370,10 @@ def login_menu():
                 else:
                     active_login = False
                     active_password = False
-                
+                #register backend
+                if register_button.collidepoint(event.pos):
+                    register_menu()
+
                 #login backend
                 if login_button.collidepoint(event.pos):
                     if len(input_login) >= 6:
@@ -277,6 +427,7 @@ def login_menu():
                                 else:
                                     print("Za długi hasło") #Tu będzie wyskawiać że za długie hasło
         
+
         pygame.display.update()
         mainClock.tick(60)
 
