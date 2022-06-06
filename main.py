@@ -64,23 +64,39 @@ def welcom_menu():
     running = True
     while running:
  
-        screen.fill((0,0,0))
+        screen.fill((27,72,171))
         draw_text('Główne menu', font, (255, 255, 255), screen, 20, 20)
         mx, my = pygame.mouse.get_pos()
         button_1w = 250
         button_1 = pygame.Rect((screensizex/2) - (button_1w/2), screensizey/2 - 100, button_1w, 75)
+        
+        
+        
         button_2 = pygame.Rect((screensizex/2) - (button_1w/2), screensizey/2 + 200, button_1w, 75)
-        #print(button_1.width)
+        
+
         if button_1.collidepoint((mx, my)):
             if click:
                 game()
         if button_2.collidepoint((mx, my)):
             if click:
                 options()
-        text = ''
-        pygame.draw.rect(screen, (255, 255, 255), button_1)
-        pygame.draw.rect(screen, (255, 255, 255), button_2)
-        draw_text(text, font, (255, 0, 0), screen, 50, 100)
+        
+        pygame.draw.rect(screen, pygame.Color('lightskyblue3'), button_1)
+        pygame.draw.rect(screen, pygame.Color('lightskyblue3'), button_2)
+        
+        button_1_text = font_text.render("Game",True,(255,255,255))
+        screen.blit(button_1_text,(button_1.x + 5,button_1.y + 5))
+
+        
+        button_2_text = font_text.render("Ustawienia",True,(255,255,255))
+        screen.blit(button_2_text,(button_2.x + 5,button_2.y + 5))
+
+        #Draww logo
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (0, HEIGHT-350))
+
+
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -93,13 +109,14 @@ def welcom_menu():
                 if event.button == 1:
                     click = True
  
+
         pygame.display.update()
         mainClock.tick(60)
- 
+
 def game():
     running = True
     while running:
-        #screen.fill((0,0,0))
+        screen.fill((27,72,171))
         draw_text('Gra', font, (255, 255, 255), screen, 20, 20)
         
         
@@ -114,11 +131,13 @@ def game():
                 pygame.draw.rect(screen, WHITE, square, width=1)
   
   
-        screen.fill(GREY)
+        #screen.fill(GREY)
         draw_grid(a=100, b=100)
         draw_grid(a=WIDTH - 100 - SQ_SIZE*10, b=100)
         
-        
+        #Draww logo
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (0, HEIGHT-350))
         
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -134,8 +153,13 @@ def game():
 def options():
     running = True
     while running:
-        screen.fill((0,0,0))
- 
+        screen.fill((27,72,171))
+
+
+        #Draww logo
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (0, HEIGHT-350))
+
         draw_text('Elo Elo 320 Opcje tu są grane zero', font, (255, 255, 255), screen, 20, 20)
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -172,7 +196,7 @@ def register_menu():
 
     running = True
     while running:
-        screen.fill((0,0,0))
+        screen.fill((27,72,171))
         draw_text('register', font, (255, 255, 255), screen, 20, 20)
         
         #user input login
@@ -222,6 +246,10 @@ def register_menu():
         if error_register == 3:
             draw_text('Za którkie hasło', font, (255, 0, 0), screen, input_rect_password.x, input_rect_password.y - 40)
 
+
+        #Draww logo
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (0, HEIGHT-350))
 
 
         for event in pygame.event.get():
@@ -318,9 +346,9 @@ def login_menu():
 
 
     while True:
-        screen.fill((0,0,0))
+        screen.fill((27,72,171))
         draw_text('logowanie', font, (255, 255, 255), screen, 20, 20)
-        draw_text('enter na klawiaturze numerycznej aby przejść dalej', font, (255, 255, 255), screen, 1500, 980)
+        #draw_text('enter na klawiaturze numerycznej aby przejść dalej', font, (255, 255, 255), screen, 1500, 980)
         
         #user input login
         if active_login:
@@ -373,6 +401,11 @@ def login_menu():
             draw_text('Za którki login', font, (255, 0, 0), screen, input_rect_login.x, input_rect_login.y - 40)
         if error_login == 3:
             draw_text('Za którkie hasło', font, (255, 0, 0), screen, input_rect_password.x, input_rect_password.y - 40)
+
+
+        #Draww logo
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (0, HEIGHT-350))
 
 
 
