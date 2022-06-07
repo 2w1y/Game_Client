@@ -77,9 +77,11 @@ def welcom_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
+                loding()
                 game()
         if button_2.collidepoint((mx, my)):
             if click:
+                loding()
                 options()
         
         pygame.draw.rect(screen, pygame.Color('lightskyblue3'), button_1)
@@ -104,6 +106,7 @@ def welcom_menu():
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    loding()
                     running = False
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -112,6 +115,27 @@ def welcom_menu():
 
         pygame.display.update()
         mainClock.tick(60)
+
+def loding():
+    for i in range(250):
+        screen.fill((27,72,171))
+        draw_text('Gra', font, (255, 255, 255), screen, 20, 20)
+        image = pygame.image.load('logo.png')
+        screen.blit(image, (WIDTH/250*i, (HEIGHT/2)-250))
+        
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    print("tu tam")
+                    return
+                    
+        pygame.display.update()
+        #time.sleep(0.00)
+        
 
 def game():
     running = True
@@ -145,6 +169,7 @@ def game():
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    loding()
                     running = False
         
         pygame.display.update()
@@ -167,6 +192,7 @@ def options():
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    loding()
                     running = False
         
         pygame.display.update()
@@ -275,12 +301,14 @@ def register_menu():
                         if len(input_password) >= 6:
                             if ignore_serwer:
                                 print("[Developer] Ignorwanie serwera jest włączone")
+                                loding()
                                 welcom_menu()
                                 pass
                             else:
                                 client.send(pickle.dumps({"acctiviti":"REGISTER","login":input_login,"password":input_password}))
                                 if client.recv(2048).decode(FORMAT) == "True":
                                     print("Konto Utworzone")
+                                    loding()
                                     login_menu()
                                 else:
                                     error_register = 1
@@ -292,6 +320,7 @@ def register_menu():
             #navigation input
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    loding()
                     running = False
 
                 #login input
@@ -427,6 +456,7 @@ def login_menu():
                     active_password = False
                 #register backend
                 if register_button.collidepoint(event.pos):
+                    loding()
                     register_menu()
 
                 #login backend
@@ -435,13 +465,17 @@ def login_menu():
                         if len(input_password) >= 6:
                             if ignore_serwer:
                                 print("[Developer] Ignorwanie serwera jest włączone")
+                                loding()
                                 welcom_menu()
+                                
                                 pass
                             else:
                                 client.send(pickle.dumps({"acctiviti":"LOGIN","login":input_login,"password":input_password}))
                                 if client.recv(2048).decode(FORMAT) == "True":
                                     print("zalogowano")
+                                    loding()
                                     welcom_menu()
+                                    
                                 else:
                                     error_login = 1
                                     print("Nie udało się zalogować ")
@@ -455,8 +489,7 @@ def login_menu():
                     send({"acctiviti":DISCONNECT_MESSAGE})
                     pygame.quit()
                     sys.exit()
-                if event.key == K_KP_ENTER:
-                    welcom_menu()
+                
 
                 #login input
                 if active_login:
@@ -486,4 +519,5 @@ def login_menu():
         pygame.display.update()
         mainClock.tick(60)
 
+loding()
 login_menu()
